@@ -4,7 +4,7 @@ using RecursiveDescentDemo.Common;
 using RecursiveDescentDemo.Implementation.Nodes;
 using RecursiveDescentDemo.Interfaces;
 
-namespace RecursiveDescentDemo.Implementation
+namespace RecursiveDescentDemo.Implementation.Generators
 {
     public class TextGenerator: IGenerator
     {

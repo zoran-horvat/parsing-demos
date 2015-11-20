@@ -5,7 +5,7 @@ namespace RecursiveDescentDemo.Implementation.Nodes
 {
     public class BinaryOperator
     {
-        public Operator Operator { get; }
+        public char Representation { get; }
 
         public BinaryOperator(Operator op)
         {
@@ -13,13 +13,13 @@ namespace RecursiveDescentDemo.Implementation.Nodes
             if (op == null)
                 throw new ArgumentNullException(nameof(op));
 
-            this.Operator = op;
+            this.Representation = op.Representation;
 
         }
 
         public override string ToString()
         {
-            return this.Operator.ToString();
+            return this.Representation.ToString();
         }
     }
 }

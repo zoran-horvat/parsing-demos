@@ -29,22 +29,22 @@ namespace RecursiveDescentDemo.Implementation
                         yield return new Digit(pos, c - '0');
                         break;
                     case '+':
-                        yield return new Addition(pos);
+                        yield return Operator.BinaryPlus(pos);
                         break;
                     case '-':
-                        yield return new Subtraction(pos);
+                        yield return Operator.BinaryMinus(pos);
                         break;
                     case '*':
-                        yield return new Multiplication(pos);
+                        yield return Operator.Multiplication(pos);
                         break;
                     case '/':
-                        yield return new Division(pos);
+                        yield return Operator.Division(pos);
                         break;
                     case '(':
-                        yield return new OpenParenthesis(pos);
+                        yield return Parenthesis.Open(pos);
                         break;
                     case ')':
-                        yield return new ClosedParenthesis(pos);
+                        yield return Parenthesis.Closed(pos);
                         break;
                     case ' ':
                     case '\t':

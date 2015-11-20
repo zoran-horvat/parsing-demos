@@ -2,10 +2,9 @@
 using System.Linq;
 using RecursiveDescentDemo.Common;
 using RecursiveDescentDemo.Implementation.Nodes;
-using RecursiveDescentDemo.Implementation.Tokens;
 using RecursiveDescentDemo.Interfaces;
 
-namespace RecursiveDescentDemo.Implementation
+namespace RecursiveDescentDemo.Implementation.Generators
 {
     public class ExpressionValueCalculator: IGenerator
     {
@@ -13,6 +12,11 @@ namespace RecursiveDescentDemo.Implementation
         {
             int value = this.ValueOf(Option<Expression>.AsOption(ast));
             Console.WriteLine("Expression value is {0}", value);
+        }
+
+        private int ValueOf(Expression expression)
+        {
+            return this.ValueOf(Option<Expression>.Some(expression));
         }
 
         private int ValueOf(Option<Expression> expression)
@@ -47,26 +51,26 @@ namespace RecursiveDescentDemo.Implementation
         private int ValueOf(Expression left, BinaryOperator op, Expression right)
         {
 
-            int leftValue = this.ValueOf(Option<Expression>.Some(left));
-            int rightValue = this.ValueOf(Option<Expression>.Some(right));
+            int leftValue = this.ValueOf(left);
+            int rightValue = this.ValueOf(right);
 
-            return this.ValueOf(leftValue, op.Operator, rightValue);
+            return this.ValueOf(leftValue, op.Representation, rightValue);
 
         }
 
-        private int ValueOf(int leftValue, Operator op, int rightValue)
+        private int ValueOf(int leftValue, char op, int rightValue)
         {
 
-            if (op is Addition)
+            if (op == '+')
                 return leftValue + rightValue;
 
-            if (op is Subtraction)
+            if (op == '-')
                 return leftValue - rightValue;
 
-            if (op is Multiplication)
+            if (op == '*')
                 return leftValue*rightValue;
 
-            if (op is Division)
+            if (op == '/')
                 return leftValue/rightValue;
 
             return 0;

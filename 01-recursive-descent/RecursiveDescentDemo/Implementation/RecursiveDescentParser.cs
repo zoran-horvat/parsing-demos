@@ -59,10 +59,18 @@ namespace RecursiveDescentDemo.Implementation
         private Option<Expression> TryParseExpression()
         {
 
-            if (IsInputOfType<Digit>())
-                return Option<Expression>.Some(this.ParseConstantExpression(this.CurrentToken as Digit));
+            Option<Expression> constant = this.TryParseConstantExpression();
+            if (constant.Any())
+                return constant;
 
-            if (!IsInputOfType<OpenParenthesis>())
+            return this.TryParseBinaryExpression();
+
+        }
+
+        private Option<Expression> TryParseBinaryExpression()
+        {
+
+            if (!IsInputOfType<Parenthesis, char>('('))
                 return this.Fail<Expression>("Expected constant or open parenthesis.");
 
             this.FetchNextToken();
@@ -81,7 +89,7 @@ namespace RecursiveDescentDemo.Implementation
                 return this.Fail<Expression>();
 
             this.FetchNextToken();
-            if (!this.IsInputOfType<ClosedParenthesis>())
+            if (!this.IsInputOfType<Parenthesis, char>(')'))
                 return this.Fail<Expression>("Expected closing parenthesis.");
 
             Expression expression = new BinaryExpression(leftSubexpression.Single(), op.Single(), rightSubexpression.Single());
@@ -100,14 +108,33 @@ namespace RecursiveDescentDemo.Implementation
 
         }
 
-        private Expression ParseConstantExpression(Digit digit)
+        private Option<Expression> TryParseConstantExpression()
         {
-            return new ConstantExpression(digit.Value);
+
+            if (!IsInputOfType<Digit>())
+                return Option<Expression>.None();
+
+            Digit digit = this.CurrentToken as Digit;
+            Expression expression = new ConstantExpression(digit.Value);
+
+            return Option<Expression>.Some(expression);
+
         }
 
         private bool IsInputOfType<T>()
         {
             return this.InputReady && this.CurrentToken is T;
+        }
+
+        private bool IsInputOfType<TInput, TRepresentation>(TRepresentation representation) where TInput: RepresentableToken<TRepresentation>
+        {
+            return this.IsInputOfType<TInput>() && this.IsRepresentation(representation);
+        }
+
+        private bool IsRepresentation<TRepresentation>(TRepresentation representation)
+        {
+            RepresentableToken<TRepresentation> token = this.CurrentToken as RepresentableToken<TRepresentation>;
+            return token != null && token.Representation.Equals(representation);
         }
 
         private bool TryParseEndOfFile()
