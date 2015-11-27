@@ -4,23 +4,25 @@ using System.Collections.Generic;
 
 namespace LexicalAnalyzerDemo
 {
-    class ConsoleInput: IEnumerable<char>
+    class ConsoleLineInput: IEnumerable<char>
     {
 
         private string Input { get; set; }
+        private IEnumerable<string> QuestionLines { get; }
 
         private Action LoadInputIfNotLoaded { get; set; }
  
-        public ConsoleInput()
+        public ConsoleLineInput(params string[] questionLines)
         {
             this.LoadInputIfNotLoaded = this.PrepareInput;
+            this.QuestionLines = new List<string>(questionLines);
         }
 
         private void PrepareInput()
         {
 
-            Console.WriteLine("Enter full arithmetic expression.");
-            Console.WriteLine("Allowed elements: integer numbers, parentheses, operators (+, -, *, /).");
+            foreach (string questionLine in this.QuestionLines)
+                Console.WriteLine(questionLine);
 
             this.Input = Console.ReadLine();
             this.LoadInputIfNotLoaded = () => { };
