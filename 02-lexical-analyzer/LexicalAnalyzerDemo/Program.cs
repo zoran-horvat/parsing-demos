@@ -22,7 +22,7 @@ namespace LexicalAnalyzerDemo
                 Console.Write("Input: ");
                 Print(input, string.Empty);
 
-                ILexicalAnalyzer lexer = CreateLexer();
+                ILexicalAnalyzer lexer = CreateRestartingLexerWithUnexpectedCharacter();
                 IEnumerable<IToken> tokens = lexer.Analyze(input);
 
                 Console.WriteLine();
@@ -40,7 +40,7 @@ namespace LexicalAnalyzerDemo
             Console.WriteLine(string.Join(delimiter, sequence.ToArray()));
         }
 
-        static ILexicalAnalyzer CreateLexer()
+        static RestartingRegexLexer CreateRestartingLexer()
         {
 
             RestartingRegexLexer lexer = new RestartingRegexLexer(new InvisibleStringClassToken("eof"));
@@ -49,6 +49,17 @@ namespace LexicalAnalyzerDemo
             lexer.Add(new VisibleTokenPattern(@"[\(\)]", "parenthesis"));
             lexer.Add(new VisibleTokenPattern(@"[\+\-\*\/]", "operator"));
             lexer.Add(new InvisibleTokenPattern(@"\s+"));
+
+            return lexer;
+
+        }
+
+        static ILexicalAnalyzer CreateRestartingLexerWithUnexpectedCharacter()
+        {
+
+            RestartingRegexLexer lexer = CreateRestartingLexer();
+
+            lexer.Add(new VisibleTokenPattern(".", "invalid-character"));
 
             return lexer;
 
