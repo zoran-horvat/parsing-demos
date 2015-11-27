@@ -1,18 +1,12 @@
-﻿using System.Collections.Generic;
-using Interfaces;
+﻿using Interfaces;
 using RegexLexicalAnalyzer;
 
 namespace LexicalAnalyzerDemo.DemoRunners
 {
-    class ArithmeticExpressionWithRestarts : DemoRunnerBase
+    class ArithmeticExpressionWithRestarts : ArithmeticExpressionLexerBase
     {
 
         public override string Description => "Regex restarting lexer for arithmetic expression";
-
-        protected override IEnumerable<char> InputStream => 
-            new ConsoleLineInput("",
-                                 "Enter full arithmetic expression.",
-                                 "Allowed elements: integer numbers, parentheses, operators (+, -, *, /).");
 
         protected override ILexicalAnalyzer CreateLexer()
         {

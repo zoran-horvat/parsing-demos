@@ -46,6 +46,7 @@
     <Compile Include="ConsoleLineInput.cs" />
     <Compile Include="ConsoleReader.cs" />
     <Compile Include="DemoRunnerBase.cs" />
+    <Compile Include="DemoRunners\ArithmeticExpressionLexerBase.cs" />
     <Compile Include="DemoRunners\ArithmeticExpressionWithUnexpectedChar.cs" />
     <Compile Include="DemoRunners\ArithmeticExpressionWithRestarts.cs" />
     <Compile Include="Program.cs" />
