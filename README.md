@@ -20,7 +20,13 @@
 	is an abstract class and it is implemented in two variants - invisible token pattern and visible token pattern.
 	This concept recognized that some parts of the input, such as white space, are legal but produce no token in the output stream.
 	Therefore, lexical analyzer setup will contain description for white space, but no white space token will ever appear in the output.
-	
+
+    LexicalAnalyzerDemo is the console application which constructs a lexical analyzer and then uses it to parse input.
+	CreateRestartingLexer() method simply constructs a restarting lexer and populates it with regular expressions that explain
+	parenthesized arithmetic expressions with four basic operations. CreateRestartingLexerWithUnexpectedCharacter() method
+	constructs the same lexer, but adds a regular expression . (dot) at the end, so that if none of the regular expressions have
+	been recognized, a new invalid-character token will be pushed to the output. This measure is taken to simplify error handling.
+
 03-text-input
     Demonstrates techniques to input text before lexical analysis.
     
@@ -37,3 +43,4 @@
     ConsoleInput is the abstract implementation based on console input/output. It wraps StringInput and feeds it with content read from the console.
         This is the abstract class and its ReadInput method is supposed to be implemented by derived classes. There are two concrete derived classes:
 	ConsoleLineInput (which reads a single line) and ConsoleBlockInput (which reads multiline content).
+
