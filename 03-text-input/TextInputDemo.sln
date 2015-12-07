@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextInputDemo", "TextInputDemo\TextInputDemo.csproj", "{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextInput", "TextInput\TextInput.csproj", "{A04D901E-8F2D-4C9E-B493-6A286909E4E3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
