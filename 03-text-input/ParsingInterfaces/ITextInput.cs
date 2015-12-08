@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 
 namespace ParsingInterfaces
 {
-    [ContractClass(typeof(TextInputContracts))]
+    [ContractClass(typeof(TextInputContract))]
     public interface ITextInput
     {
         IEnumerable<char> LookAhead { get; }

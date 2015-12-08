@@ -49,6 +49,24 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\02-lexical-analyzer\Common\Common.csproj">
+      <Project>{c4bd564a-59cb-4cd3-b224-91440219807f}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\03-text-input\ParsingInterfaces\ParsingInterfaces.csproj">
+      <Project>{2d509d7a-f309-4da6-ad9e-31f2347c5c76}</Project>
+      <Name>ParsingInterfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\03-text-input\TextInput\TextInput.csproj">
+      <Project>{a04d901e-8f2d-4c9e-b493-6a286909e4e3}</Project>
+      <Name>TextInput</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RegexLexicalAnalyzer\RegexLexicalAnalyzer.csproj">
+      <Project>{6537a04f-734b-4cb1-8623-3f5dbe652a07}</Project>
+      <Name>RegexLexicalAnalyzer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
