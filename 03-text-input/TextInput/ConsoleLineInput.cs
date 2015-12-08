@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TextInput.Implementation
+namespace TextInput
 {
     public class ConsoleLineInput: ConsoleInput
     {

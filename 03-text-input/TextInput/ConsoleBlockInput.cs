@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Text;
 
-namespace TextInput.Implementation
+namespace TextInput
 {
     public class ConsoleBlockInput: ConsoleInput
     {

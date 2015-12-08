@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextInputDemo", "TextInputDemo\TextInputDemo.csproj", "{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexicalAnalyzerDemo", "LexicalAnalyzerDemo\LexicalAnalyzerDemo.csproj", "{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextInput", "TextInput\TextInput.csproj", "{A04D901E-8F2D-4C9E-B493-6A286909E4E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextInput", "..\..\03-text-input\TextInput\TextInput.csproj", "{A04D901E-8F2D-4C9E-B493-6A286909E4E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsingInterfaces", "ParsingInterfaces\ParsingInterfaces.csproj", "{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsingInterfaces", "..\..\03-text-input\ParsingInterfaces\ParsingInterfaces.csproj", "{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C11E8E5-AA6E-4C98-A9D2-E2D37E7B74A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Release|Any CPU.ActiveCfg = Release|Any CPU

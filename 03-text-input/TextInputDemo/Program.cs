@@ -1,7 +1,7 @@
-﻿using System;
+﻿using ParsingInterfaces;
+using System;
 using System.Collections.Generic;
-using TextInput.Implementation;
-using TextInput.Interfaces;
+using TextInput;
 
 namespace TextInputDemo
 {

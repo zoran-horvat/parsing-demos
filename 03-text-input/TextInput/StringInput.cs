@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ParsingInterfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using TextInput.Interfaces;
 
-namespace TextInput.Implementation
+namespace TextInput
 {
     public class StringInput: ITextInput
     {
@@ -30,13 +30,9 @@ namespace TextInput.Implementation
             }
         }
 
-        public void Advance(int positionsToSkip)
-        {
-            Contract.Requires<ArgumentException>(positionsToSkip >= 0, "Number of positionsToSkip to advance must be non-negative.");
-            Contract.Requires<ArgumentException>(this.Position + positionsToSkip <= this.Input.Length, "Must not advance beyond end of input.");
+        public int CharactersRemaining => this.Input.Length - this.Position;
 
-            this.Position += positionsToSkip;
+        public void Advance(int charactersToSkip) => this.Position += charactersToSkip;
 
-        }
     }
 }

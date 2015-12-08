@@ -1,9 +1,9 @@
-﻿using System;
+﻿using ParsingInterfaces;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using TextInput.Interfaces;
 
-namespace TextInput.Implementation
+namespace TextInput
 {
     public abstract class ConsoleInput: ITextInput
     {
@@ -41,6 +41,8 @@ namespace TextInput.Implementation
         }
 
         public IEnumerable<char> LookAhead => this.GetBasicTextInput().LookAhead;
+
+        public int CharactersRemaining => this.GetBasicTextInput().CharactersRemaining;
 
         public void Advance(int positionsToSkip) => this.GetBasicTextInput().Advance(positionsToSkip);
 
