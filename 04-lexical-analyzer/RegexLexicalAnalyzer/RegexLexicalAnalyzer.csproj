@@ -90,7 +90,7 @@
     <Compile Include="RegularExpressionLexer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\03-text-input\ParsingInterfaces\ParsingInterfaces.csproj">
+    <ProjectReference Include="..\..\03-text-input\ParsingInterfaces\ParsingInterfaces.csproj">
       <Project>{2d509d7a-f309-4da6-ad9e-31f2347c5c76}</Project>
       <Name>ParsingInterfaces</Name>
     </ProjectReference>

@@ -5,13 +5,13 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LexicalAnalyzerDemo", "LexicalAnalyzerDemo\LexicalAnalyzerDemo.csproj", "{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextInput", "..\..\03-text-input\TextInput\TextInput.csproj", "{A04D901E-8F2D-4C9E-B493-6A286909E4E3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsingInterfaces", "..\..\03-text-input\ParsingInterfaces\ParsingInterfaces.csproj", "{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegexLexicalAnalyzer", "RegexLexicalAnalyzer\RegexLexicalAnalyzer.csproj", "{6537A04F-734B-4CB1-8623-3F5DBE652A07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\..\02-lexical-analyzer\Common\Common.csproj", "{C4BD564A-59CB-4CD3-B224-91440219807F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "..\02-lexical-analyzer\Common\Common.csproj", "{C4BD564A-59CB-4CD3-B224-91440219807F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParsingInterfaces", "..\03-text-input\ParsingInterfaces\ParsingInterfaces.csproj", "{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextInput", "..\03-text-input\TextInput\TextInput.csproj", "{A04D901E-8F2D-4C9E-B493-6A286909E4E3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,14 +23,6 @@ Global
 		{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7258B62-DFC3-43AB-96CE-65D1DA61F91D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6537A04F-734B-4CB1-8623-3F5DBE652A07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6537A04F-734B-4CB1-8623-3F5DBE652A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6537A04F-734B-4CB1-8623-3F5DBE652A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +31,14 @@ Global
 		{C4BD564A-59CB-4CD3-B224-91440219807F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4BD564A-59CB-4CD3-B224-91440219807F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4BD564A-59CB-4CD3-B224-91440219807F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D509D7A-F309-4DA6-AD9E-31F2347C5C76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A04D901E-8F2D-4C9E-B493-6A286909E4E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
