@@ -15,6 +15,8 @@ namespace LexicalAnalyzerDemo
             RegularExpression[] rules = new[]
             {
                 new RegularExpression("d", "digit"),
+                new RegularExpression("[()]", "parenthesis"),
+                new RegularExpression("[+-*/]", "operator"), 
                 new RegularExpression(".", "unexpected-input")
             };
 

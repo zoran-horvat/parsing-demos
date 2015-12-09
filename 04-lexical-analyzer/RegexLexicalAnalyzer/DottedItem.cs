@@ -17,7 +17,7 @@ namespace RegexLexicalAnalyzer
 
         private string TokenClass => this.Expression.Class;
 
-        private int DotBefore { get; set; }
+        private int DotBefore { get; }
 
         public DottedItem(RegularExpression expression)
         {
@@ -43,6 +43,7 @@ namespace RegexLexicalAnalyzer
             {
                 case 'd': return this.MoveDigitOver(input);
                 case '.': return this.MoveAnyOver(input);
+                case '[': return this.MoveChoiceOver(input);
                 default: return EmptyDottedItemSet;
             }
         }
@@ -57,9 +58,27 @@ namespace RegexLexicalAnalyzer
 
         }
 
+        private IEnumerable<DottedItem> MoveChoiceOver(char input)
+        {
+
+            int indexOfClosingSquareBracket = this.Pattern.IndexOf(']', this.DotBefore + 1);
+            int indexOfCharacter = this.Pattern.IndexOf(input, 1, indexOfClosingSquareBracket - 1);
+
+            if (indexOfCharacter < 0)
+                return EmptyDottedItemSet;
+
+            return new[] {new DottedItem(this.Expression, indexOfClosingSquareBracket + 1, this.RecognizedInput + input)};
+
+        } 
+
         private IEnumerable<DottedItem> MoveAnyOver(char input)
         {
+
+            if (input == '\r' || input == '\n')
+                return EmptyDottedItemSet;
+
             return new[] { new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput + input) };
+
         }
 
         private bool IsReduceItem =>  this.DotBefore >= this.Pattern.Length;
@@ -80,7 +99,7 @@ namespace RegexLexicalAnalyzer
 
         private string PatternAfterDot => this.Pattern.Substring(this.DotBefore);
 
-        public override string ToString() => PatternBeforeDot + "°" + PatternAfterDot;
+        public override string ToString() => $"\"{RecognizedInput}\"|{PatternBeforeDot}°{PatternAfterDot}";
 
         public override int GetHashCode()
         {
