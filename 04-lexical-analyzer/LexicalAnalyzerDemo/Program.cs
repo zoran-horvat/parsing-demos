@@ -3,7 +3,6 @@ using ParsingInterfaces;
 using RegexLexicalAnalyzer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TextInput;
 
 namespace LexicalAnalyzerDemo
@@ -13,14 +12,15 @@ namespace LexicalAnalyzerDemo
         static void Main(string[] args)
         {
 
-            string[] rules = new[]
+            RegularExpression[] rules = new[]
             {
-                "d(d*)"
+                new RegularExpression("d", "digit"),
+                new RegularExpression(".", "unexpected-input")
             };
 
-            ILexicalAnalyzer lexer = new RegularExpressionLexer(rules.Select(rule => new RegularExpression(rule)));
+            ILexicalAnalyzer lexer = new RegularExpressionLexer(rules);
 
-            ITextInput input = new ConsoleLineInput("Enter arithmetic expression: ");
+            ITextInput input = new ConsoleLineInput("Enter a digit: ");
 
             IEnumerable<IToken> tokens = lexer.Analyze(input);
 

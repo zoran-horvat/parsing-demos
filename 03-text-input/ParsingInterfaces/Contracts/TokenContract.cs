@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace ParsingInterfaces.Contracts
 {
@@ -14,21 +15,12 @@ namespace ParsingInterfaces.Contracts
             }
         }
 
-        int IToken.InputColumn
+        public string Class
         {
             get
             {
-                Contract.Ensures(Contract.Result<int>() >= 0);
-                return 0;
-            }
-        }
-
-        int IToken.InputRow
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<int>() >= 0);
-                return 0;
+                Contract.Ensures(!string.IsNullOrWhiteSpace(Contract.Result<string>()));
+                return string.Empty;
             }
         }
 

@@ -30,7 +30,7 @@ namespace Common
                 {
                     PaddedField = field.PadRight(fieldWidth),
                     IsEndOfFile = index == fieldsCount - 1,
-                    IsEndOfLine = index % fieldsPerLine == 0
+                    IsEndOfLine = (index + 1) % fieldsPerLine == 0
                 })
                 .Select(tuple => tuple.PaddedField + ((tuple.IsEndOfFile || tuple.IsEndOfLine) ? Environment.NewLine : " "))
                 .ToArray();
@@ -38,8 +38,6 @@ namespace Common
             string block = string.Join(string.Empty, delimitedFields);
 
             Console.Write(block);
-            if (delimitedFields.Length % fieldsPerLine != 0)
-                Console.WriteLine();
 
         }
     }

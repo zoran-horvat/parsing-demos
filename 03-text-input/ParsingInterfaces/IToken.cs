@@ -7,7 +7,6 @@ namespace ParsingInterfaces
     public interface IToken
     {
         string Representation { get; }
-        int InputRow { get; }
-        int InputColumn { get; }
+        string Class { get; }
     }
 }

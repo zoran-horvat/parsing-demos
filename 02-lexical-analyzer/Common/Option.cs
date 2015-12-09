@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Common
@@ -31,6 +30,21 @@ namespace Common
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        private bool IsNone => this.Data.Length == 0;
+
+        public override string ToString()
+        {
+
+            if (this.IsNone)
+                return "None";
+
+            if (object.ReferenceEquals(null, this.Data[0]))
+                return "null";
+
+            return this.Data[0].ToString();
+
         }
     }
 }
