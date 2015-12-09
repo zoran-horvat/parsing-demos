@@ -24,7 +24,7 @@ namespace RegexLexicalAnalyzer
 
         public override string ToString()
         {
-            return string.Format("{0}({1})", this.Class, this.Representation);
+            return string.Format("{0}({1})", this.Class, this.Representation.Replace("\r", "\\r").Replace("\n", "\\n"));
         }
 
     }

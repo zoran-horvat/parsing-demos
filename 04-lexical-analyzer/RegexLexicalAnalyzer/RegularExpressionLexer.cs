@@ -45,9 +45,15 @@ namespace RegexLexicalAnalyzer
         private Option<IToken> TryIdentifySingleToken(ITextInput input)
         {
 
-            IEnumerable<DottedItem> currentItemSet = this.Rules.Select(rule => new DottedItem(rule));
+            IEnumerable<DottedItem> currentItemSet =
+                this.Rules
+                    .SelectMany(DottedItem.InitialSetFor)
+                    .Distinct()
+                    .ToList();
+
             IEnumerator<char> lookahead = input.LookAhead.GetEnumerator();
 
+            Console.Write("Initial set: ");
             currentItemSet.Print(1000);
 
             Option<IToken> outputToken = Option<IToken>.None();
@@ -55,10 +61,13 @@ namespace RegexLexicalAnalyzer
             while (currentItemSet.Any() && lookahead.MoveNext())
             {
 
+                Console.WriteLine("Input {0} leads to item set:", lookahead.Current);
+
                 currentItemSet =
                     currentItemSet
                         .SelectMany(item => item.MoveOver(lookahead.Current))
-                        .Distinct();
+                        .Distinct()
+                        .ToList();
 
                 Option<IToken> newToken =
                     currentItemSet.SelectMany(item => item.TryReduce()).Take(1).AsOption();
@@ -66,19 +75,22 @@ namespace RegexLexicalAnalyzer
                 if (newToken.Any())
                     outputToken = newToken;
 
-                currentItemSet.Print(1000);
-
+                currentItemSet.Print(80);
+                Console.WriteLine("Current best: {0}", outputToken);
+                
             }
 
+            Console.WriteLine();
+            Console.WriteLine("Reduced {0}", outputToken);
             Console.WriteLine("------------------");
+            Console.WriteLine();
+
+            //Console.Write("Press ENTER to continue to next step... ");
+            //Console.ReadLine();
 
             return outputToken;
 
         }
 
-        private void Print(IEnumerable<DottedItem> currentItemSet)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

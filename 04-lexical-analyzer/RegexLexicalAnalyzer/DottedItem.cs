@@ -3,6 +3,7 @@ using ParsingInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 
 namespace RegexLexicalAnalyzer
 {
@@ -19,7 +20,7 @@ namespace RegexLexicalAnalyzer
 
         private int DotBefore { get; }
 
-        public DottedItem(RegularExpression expression)
+        private DottedItem(RegularExpression expression)
         {
             Contract.Requires<ArgumentNullException>(expression != null, "Regular expression must not be null.");
             this.Expression = expression;
@@ -33,42 +34,106 @@ namespace RegexLexicalAnalyzer
             this.RecognizedInput = recognizedInput;
         }
 
+        public static IEnumerable<DottedItem> InitialSetFor(RegularExpression expression)
+        {
+            return new DottedItem(expression).EpsilonMove();
+        }
+
         public IEnumerable<DottedItem> MoveOver(char input)
         {
 
             if (this.IsReduceItem)
                 return EmptyDottedItemSet;
 
+            return
+                MoveOverCharacter(input)
+                    .SelectMany(item => item.EpsilonMove())
+                    .ToList();
+
+        }
+
+        private IEnumerable<DottedItem> MoveOverCharacter(char input)
+        {
             switch (this.Pattern[this.DotBefore])
             {
-                case 'd': return this.MoveDigitOver(input);
-                case '.': return this.MoveAnyOver(input);
-                case '[': return this.MoveChoiceOver(input);
-                default: return EmptyDottedItemSet;
+                case 'd':
+                    return this.MoveOver(input, char.IsDigit);
+                case 'a':
+                    return this.MoveOver(input, char.IsLetter);
+                case 's':
+                    return this.MoveOver(input, (c) => c == ' ');
+                case '[':
+                    return this.MoveChoiceOver(input);
+                case '.':
+                    return this.MoveAnyOver(input);
+                default:
+                    return EmptyDottedItemSet;
             }
         }
 
-        private IEnumerable<DottedItem> MoveDigitOver(char input)
+        private IEnumerable<DottedItem> MoveOver(char input, Func<char, bool> predicate)
         {
 
-            if (!Char.IsDigit(input))
+            if (!predicate(input))
                 return EmptyDottedItemSet;
 
-            return new[] { new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput + input) };
+            return new[] {new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput + input)};
 
-        }
+        } 
 
         private IEnumerable<DottedItem> MoveChoiceOver(char input)
         {
 
-            int indexOfClosingSquareBracket = this.Pattern.IndexOf(']', this.DotBefore + 1);
-            int indexOfCharacter = this.Pattern.IndexOf(input, 1, indexOfClosingSquareBracket - 1);
+            int indexOfClosingSquareBracket = this.Pattern.IndexOf(']', this.DotBefore + 2);
+            int range = indexOfClosingSquareBracket - this.DotBefore - 1;
+            int indexOfCharacter = this.Pattern.IndexOf(input, this.DotBefore + 1, range);
 
             if (indexOfCharacter < 0)
                 return EmptyDottedItemSet;
 
             return new[] {new DottedItem(this.Expression, indexOfClosingSquareBracket + 1, this.RecognizedInput + input)};
 
+        }
+
+        private IEnumerable<DottedItem> EpsilonMove()
+        {
+
+            if (this.IsReduceItem)
+                return new[] {this};
+
+            if (this.Pattern[this.DotBefore] == '(')
+                return this.EpsilonMoveBeforeRepetition();
+
+            if (this.Pattern[this.DotBefore] == '*')
+                return this.EpsilonMoveAfterRepetition();
+
+            return new[] {this};
+
+        }
+
+        private IEnumerable<DottedItem> EpsilonMoveBeforeRepetition()
+        {
+            // Covers subexpressions of form .(x*), where dot is placed right before the opening bracket
+            // This subexpression is turned into two dotted items: (.x*) and (x*).
+
+            return new[]
+            {
+                new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput),  // Jump overt opening bracket
+                new DottedItem(this.Expression, this.DotBefore + 4, this.RecognizedInput)   // Jump over the entire repeated item
+            };
+
+        }
+
+        private IEnumerable<DottedItem> EpsilonMoveAfterRepetition()
+        {
+            // Covers subexpressions of form (x.*), where x has already been recognized
+            // Turns subexpression into two dotted items: (.x*) and (x*).
+
+            return new[]
+            {
+                new DottedItem(this.Expression, this.DotBefore - 1, this.RecognizedInput),  // Jumps back before the item to recognize
+                new DottedItem(this.Expression, this.DotBefore + 2, this.RecognizedInput)   // Jumps out of the repeated item
+            };
         } 
 
         private IEnumerable<DottedItem> MoveAnyOver(char input)
