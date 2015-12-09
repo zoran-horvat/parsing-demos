@@ -13,9 +13,9 @@ namespace LexicalAnalyzerDemo
         static void Main(string[] args)
         {
 
-            //GetExpressionTokens().Print(100);
+            GetExpressionTokens().Print(100);
 
-            GetCSharpFunctionTokens().Print(100);
+            //GetCSharpFunctionTokens().Print(100);
 
             Console.Write("Press ENTER to exit... ");
             Console.ReadLine();
@@ -29,11 +29,12 @@ namespace LexicalAnalyzerDemo
             {
                 new RegularExpression("d(d*)", "number"),
                 new RegularExpression("[()]", "parenthesis"),
-                new RegularExpression("[+-*/]", "operator"),
-                new RegularExpression(".", "unexpected-input")
+                new RegularExpression("[+-*/]", "operator")
             };
 
-            ILexicalAnalyzer lexer = new RegularExpressionLexer(rules);
+            RegularExpressionLexer lexer = new RegularExpressionLexer(rules, "unexpected-input", "end-of-input");
+            lexer.Verbose();
+            lexer.StepByStep();
 
             ITextInput input = new ConsoleLineInput("Enter an arithmetic expression: ");
 
@@ -65,11 +66,10 @@ string Report(IEnumerable<int> values)
                 new RegularExpression("[+][=]", "operator"),
                 new RegularExpression("[.,;]", "punctuator"),
                 new RegularExpression("[\"](.*)[\"]", "string"), 
-                new RegularExpression("[(){}]", "parenthesis"), 
-                new RegularExpression(".", "unexpected-input")
+                new RegularExpression("[(){}]", "parenthesis")
             };
 
-            ILexicalAnalyzer lexer = new RegularExpressionLexer(rules);
+            ILexicalAnalyzer lexer = new RegularExpressionLexer(rules, "unexpected-input", "end-of-input");
 
             ITextInput input = new ConsoleBlockInput("Enter block of C# code (end with line containing just -):\n", "-");
 

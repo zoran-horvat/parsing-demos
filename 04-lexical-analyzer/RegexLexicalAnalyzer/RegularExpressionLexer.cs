@@ -12,17 +12,75 @@ namespace RegexLexicalAnalyzer
 
         private IEnumerable<RegularExpression> Rules { get; }
 
-        public RegularExpressionLexer(IEnumerable<RegularExpression> rules)
+        private IToken EndOfInputToken { get; }
+
+        private Action EndOfRecognitionStep { get; set; }
+
+        private Action<IEnumerable<DottedItem>>  PrintInitialItemSet { get; set; }
+
+        private Action<char, IEnumerable<DottedItem>, Option<IToken>> PrintInputAndItemSet { get; set; }
+
+        private Action<Option<IToken>> PrintReducedToken { get; set; }
+
+        public RegularExpressionLexer(IEnumerable<RegularExpression> rules, string unexpectedInputClass, string endOfInputClass)
         {
 
             Contract.Requires<ArgumentNullException>(rules != null, "Lexical analyzer rules must not be null.");
             Contract.Requires<ArgumentException>(rules.All(rule => rule != null), "All rules for lexical analyzer must be non-null.");
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(unexpectedInputClass), "Class of unexpected input token must be non-empty.");
+            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(endOfInputClass), "Class of end of input token must be non-empty.");
 
-            this.Rules = new List<RegularExpression>(rules);
+            this.Rules =
+                rules
+                    .Concat(new RegularExpression[] {new RegularExpression(".", unexpectedInputClass)})
+                    .ToList();
+
+            this.EndOfInputToken = new StringClassToken(string.Empty, endOfInputClass);
+
+            this.EndOfRecognitionStep = () => { };
+            this.PrintInitialItemSet = (itemSet) => { };
+            this.PrintInputAndItemSet = (input, itemSet, token) => { };
+            this.PrintReducedToken = (token) => { };
 
         }
 
-        public IEnumerable<IToken> Analyze(ITextInput input)
+        public void StepByStep()
+        {
+            this.EndOfRecognitionStep = () =>
+            {
+                Console.Write("Press ENTER to continue to next step... ");
+                Console.ReadLine();
+            };
+
+        }
+
+        public void Verbose()
+        {
+
+            this.PrintInitialItemSet = (itemSet) =>
+                {
+                    Console.Write("Initial set: ");
+                    itemSet.Print(1000);
+                };
+
+            this.PrintInputAndItemSet = (input, currentItemSet, outputToken) =>
+                {
+                    Console.WriteLine("Input {0} leads to item set:", input);
+                    currentItemSet.Print(80);
+                    Console.WriteLine("Current best: {0}", outputToken);
+                };
+
+            this.PrintReducedToken = (token) =>
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Reduced {0}", token);
+                    Console.WriteLine("------------------");
+                    Console.WriteLine();
+                };
+
+        }
+
+    public IEnumerable<IToken> Analyze(ITextInput input)
         {
 
             while (input.CharactersRemaining > 0)
@@ -40,6 +98,8 @@ namespace RegexLexicalAnalyzer
 
             }
 
+            yield return this.EndOfInputToken;
+
         }
 
         private Option<IToken> TryIdentifySingleToken(ITextInput input)
@@ -53,15 +113,12 @@ namespace RegexLexicalAnalyzer
 
             IEnumerator<char> lookahead = input.LookAhead.GetEnumerator();
 
-            Console.Write("Initial set: ");
-            currentItemSet.Print(1000);
+            PrintInitialItemSet(currentItemSet);
 
             Option<IToken> outputToken = Option<IToken>.None();
 
             while (currentItemSet.Any() && lookahead.MoveNext())
             {
-
-                Console.WriteLine("Input {0} leads to item set:", lookahead.Current);
 
                 currentItemSet =
                     currentItemSet
@@ -75,18 +132,13 @@ namespace RegexLexicalAnalyzer
                 if (newToken.Any())
                     outputToken = newToken;
 
-                currentItemSet.Print(80);
-                Console.WriteLine("Current best: {0}", outputToken);
-                
+                PrintInputAndItemSet(lookahead.Current, currentItemSet, outputToken);
+
             }
 
-            Console.WriteLine();
-            Console.WriteLine("Reduced {0}", outputToken);
-            Console.WriteLine("------------------");
-            Console.WriteLine();
+            PrintReducedToken(outputToken);
 
-            //Console.Write("Press ENTER to continue to next step... ");
-            //Console.ReadLine();
+            this.EndOfRecognitionStep();
 
             return outputToken;
 
