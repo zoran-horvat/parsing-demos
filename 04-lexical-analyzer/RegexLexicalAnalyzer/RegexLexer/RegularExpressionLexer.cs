@@ -4,21 +4,26 @@ using ParsingInterfaces;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Common;
+using RegexLexicalAnalyzer.TableLexer;
 
-namespace RegexLexicalAnalyzer
+namespace RegexLexicalAnalyzer.RegexLexer
 {
     public class RegularExpressionLexer : ILexicalAnalyzer
     {
 
         private IEnumerable<RegularExpression> Rules { get; }
 
+        private DottedItemSet InitialSet => this.Rules.SelectMany(rule => DottedItem.InitialSetFor(rule)).Distinct().AsItemSet();
+
+        private string CalculateAlphabet() => new string(this.Rules.SelectMany(rule => rule.GetAlphabet()).Distinct().OrderBy(c => c).ToArray());
+
         private IToken EndOfInputToken { get; }
 
         private Action EndOfRecognitionStep { get; set; }
 
-        private Action<IEnumerable<DottedItem>>  PrintInitialItemSet { get; set; }
+        private Action<DottedItemSet>  PrintInitialItemSet { get; set; }
 
-        private Action<char, IEnumerable<DottedItem>, Option<IToken>> PrintInputAndItemSet { get; set; }
+        private Action<char, DottedItemSet, Option<IToken>> PrintInputAndItemSet { get; set; }
 
         private Action<Option<IToken>> PrintReducedToken { get; set; }
 
@@ -102,14 +107,18 @@ namespace RegexLexicalAnalyzer
 
         }
 
+        private DottedItemSet GetFollowingSet(DottedItemSet currentSet, char lookahead)
+        {
+            return currentSet
+                .SelectMany(item => item.MoveOver(lookahead))
+                .Distinct()
+                .AsItemSet();
+        }
+
         private Option<IToken> TryIdentifySingleToken(ITextInput input)
         {
 
-            IEnumerable<DottedItem> currentItemSet =
-                this.Rules
-                    .SelectMany(DottedItem.InitialSetFor)
-                    .Distinct()
-                    .ToList();
+            DottedItemSet currentItemSet = this.InitialSet;
 
             IEnumerator<char> lookahead = input.LookAhead.GetEnumerator();
 
@@ -120,11 +129,7 @@ namespace RegexLexicalAnalyzer
             while (currentItemSet.Any() && lookahead.MoveNext())
             {
 
-                currentItemSet =
-                    currentItemSet
-                        .SelectMany(item => item.MoveOver(lookahead.Current))
-                        .Distinct()
-                        .ToList();
+                currentItemSet = this.GetFollowingSet(currentItemSet, lookahead.Current);
 
                 Option<IToken> newToken =
                     currentItemSet.SelectMany(item => item.TryReduce()).Take(1).AsOption();
@@ -141,6 +146,56 @@ namespace RegexLexicalAnalyzer
             this.EndOfRecognitionStep();
 
             return outputToken;
+
+        }
+
+        public TransitionTable GetTransitionTable()
+        {
+
+            string alphabet = this.CalculateAlphabet();
+
+            DottedItemSet currentState = this.InitialSet;
+
+            DottedItemSetIndex states = new DottedItemSetIndex();
+
+            states.Add(currentState);
+
+            Queue<int> unexpandedStates = new Queue<int>();
+            unexpandedStates.Enqueue(0);
+
+            TransitionTable transitionTable = new TransitionTable();
+
+            while (unexpandedStates.Count > 0)
+            {
+
+                int currentStateIndex = unexpandedStates.Dequeue();
+                currentState = states.GetItemSet(currentStateIndex);
+
+                foreach (char input in alphabet)
+                {
+
+                    DottedItemSet nextState = this.GetFollowingSet(currentState, input);
+
+                    int nextStateIndex = 0;
+
+                    if (!states.Contains(nextState))
+                    {
+                        states.Add(nextState);
+                        nextStateIndex = states.GetIndexFor(nextState);
+                        unexpandedStates.Enqueue(nextStateIndex);
+                    }
+                    else
+                    {
+                        nextStateIndex = states.GetIndexFor(nextState);
+                    }
+
+                    transitionTable.SetTransition(currentStateIndex, input, nextStateIndex);
+
+                }
+
+            }
+
+            return transitionTable;
 
         }
 

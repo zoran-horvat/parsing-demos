@@ -22,7 +22,7 @@ namespace Common
             IEnumerable<string> fields = sequence.Select(el => el.ToString()).ToList();
             int fieldsCount = fields.Count();
             int fieldWidth = fields.DefaultIfEmpty(string.Empty).Max(field => field.Length);
-            int fieldsPerLine = (lineWidth + 1) / (fieldWidth + 1);
+            int fieldsPerLine = Math.Max((lineWidth + 1) / (fieldWidth + 1), 1);
 
             string[] delimitedFields =
                 fields

@@ -1,6 +1,7 @@
 ﻿using Common;
 using ParsingInterfaces;
-using RegexLexicalAnalyzer;
+using RegexLexicalAnalyzer.RegexLexer;
+using RegexLexicalAnalyzer.TableLexer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,26 +14,42 @@ namespace LexicalAnalyzerDemo
         static void Main(string[] args)
         {
 
-            //GetExpressionTokens().Print(100);
+            GetExpressionTokens().Print(100);
 
-            GetCSharpFunctionTokens().Print(100);
+            //GetCSharpFunctionTokens().Print(100);
 
             Console.Write("Press ENTER to exit... ");
             Console.ReadLine();
 
         }
 
+        private static IEnumerable<RegularExpression> ArithmeticExpressionRules
+        {
+            get
+            {
+                return new[]
+                {
+                    new RegularExpression("d(d)*", "number"),
+                    new RegularExpression("[()]", "parenthesis"),
+                    new RegularExpression("[+-*/]", "operator")
+                };
+            }
+        }
+
+        private static RegularExpressionLexer CreateArithmeticExpressionLexer()
+        {
+            RegularExpressionLexer lexer = new RegularExpressionLexer(ArithmeticExpressionRules, "unexpected-input", "end-of-input");
+
+            TransitionTable transitionTable = lexer.GetTransitionTable();
+            transitionTable.GetAllTransitions().OrderBy(entry => entry.Item1).ThenBy(entry => entry.Item2).Select(entry => $"({entry.Item1}, {entry.Item2}) -> {entry.Item3}").Print(1);
+
+            return lexer;
+        }
+
         private static IEnumerable<IToken> GetExpressionTokens()
         {
 
-            RegularExpression[] rules = new[]
-            {
-                new RegularExpression("d(d)*", "number"),
-                new RegularExpression("[()]", "parenthesis"),
-                new RegularExpression("[+-*/]", "operator")
-            };
-
-            RegularExpressionLexer lexer = new RegularExpressionLexer(rules, "unexpected-input", "end-of-input");
+            RegularExpressionLexer lexer = CreateArithmeticExpressionLexer();
             lexer.Verbose();
             lexer.StepByStep();
 
@@ -69,7 +86,10 @@ string Report(IEnumerable<int> values)
                 new RegularExpression("[(){}]", "parenthesis")
             };
 
-            ILexicalAnalyzer lexer = new RegularExpressionLexer(rules, "unexpected-input", "end-of-input");
+            RegularExpressionLexer lexer = new RegularExpressionLexer(rules, "unexpected-input", "end-of-input");
+
+            TransitionTable transitionTable = lexer.GetTransitionTable();
+            transitionTable.GetAllTransitions().OrderBy(entry => entry.Item1).ThenBy(entry => entry.Item2).Select(entry => $"({entry.Item1}, {entry.Item2}) -> {entry.Item3}").Print(1);
 
             ITextInput input = new ConsoleBlockInput("Enter block of C# code (end with line containing just -):\n", "-");
 

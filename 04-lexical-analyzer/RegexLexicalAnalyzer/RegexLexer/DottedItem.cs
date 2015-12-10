@@ -1,13 +1,12 @@
 ﻿using Common;
 using ParsingInterfaces;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
-namespace RegexLexicalAnalyzer
+namespace RegexLexicalAnalyzer.RegexLexer
 {
-    internal class DottedItem
+    internal class DottedItem: IComparable<DottedItem>
     {
 
         private string RecognizedInput { get; }
@@ -34,12 +33,12 @@ namespace RegexLexicalAnalyzer
             this.RecognizedInput = recognizedInput;
         }
 
-        public static IEnumerable<DottedItem> InitialSetFor(RegularExpression expression)
+        public static DottedItemSet InitialSetFor(RegularExpression expression)
         {
             return new DottedItem(expression).EpsilonMove();
         }
 
-        public IEnumerable<DottedItem> MoveOver(char input)
+        public DottedItemSet MoveOver(char input)
         {
 
             if (this.IsReduceItem)
@@ -48,11 +47,11 @@ namespace RegexLexicalAnalyzer
             return
                 MoveOverCharacter(input)
                     .SelectMany(item => item.EpsilonMove())
-                    .ToList();
+                    .AsItemSet();
 
         }
 
-        private IEnumerable<DottedItem> MoveOverCharacter(char input)
+        private DottedItemSet MoveOverCharacter(char input)
         {
             switch (this.Pattern[this.DotBefore])
             {
@@ -71,17 +70,17 @@ namespace RegexLexicalAnalyzer
             }
         }
 
-        private IEnumerable<DottedItem> MoveOver(char input, Func<char, bool> predicate)
+        private DottedItemSet MoveOver(char input, Func<char, bool> predicate)
         {
 
             if (!predicate(input))
                 return EmptyDottedItemSet;
 
-            return new[] {new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput + input)};
+            return new DottedItemSet(new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput + input));
 
         } 
 
-        private IEnumerable<DottedItem> MoveChoiceOver(char input)
+        private DottedItemSet MoveChoiceOver(char input)
         {
 
             int indexOfClosingSquareBracket = this.Pattern.IndexOf(']', this.DotBefore + 2);
@@ -91,15 +90,15 @@ namespace RegexLexicalAnalyzer
             if (indexOfCharacter < 0)
                 return EmptyDottedItemSet;
 
-            return new[] {new DottedItem(this.Expression, indexOfClosingSquareBracket + 1, this.RecognizedInput + input)};
+            return new DottedItemSet(new DottedItem(this.Expression, indexOfClosingSquareBracket + 1, this.RecognizedInput + input));
 
         }
 
-        private IEnumerable<DottedItem> EpsilonMove()
+        private DottedItemSet EpsilonMove()
         {
 
             if (this.IsReduceItem)
-                return new[] {this};
+                return new DottedItemSet(this);
 
             if (this.Pattern[this.DotBefore] == '(')
                 return this.EpsilonMoveBeforeRepetition();
@@ -107,42 +106,46 @@ namespace RegexLexicalAnalyzer
             if (this.Pattern[this.DotBefore] == ')')
                 return this.EpsilonMoveAfterRepetition();
 
-            return new[] {this};
+            return new DottedItemSet(this);
 
         }
 
-        private IEnumerable<DottedItem> EpsilonMoveBeforeRepetition()
+        private DottedItemSet EpsilonMoveBeforeRepetition()
         {
             // Covers subexpressions of form .(x)*, where dot is placed right before the opening bracket
             // This subexpression is turned into two dotted items: (.x)* and (x)*.
 
-            return new[]
-            {
-                new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput),  // Jump overt opening bracket
-                new DottedItem(this.Expression, this.DotBefore + 4, this.RecognizedInput)   // Jump over the entire repeated item
-            };
+            return 
+                new[]
+                {
+                    new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput),  // Jump overt opening bracket
+                    new DottedItem(this.Expression, this.DotBefore + 4, this.RecognizedInput)   // Jump over the entire repeated item
+                }
+                .AsItemSet();
 
         }
 
-        private IEnumerable<DottedItem> EpsilonMoveAfterRepetition()
+        private DottedItemSet EpsilonMoveAfterRepetition()
         {
             // Covers subexpressions of form (x.)*, where x has already been recognized
             // Turns subexpression into two dotted items: (.x)* and (x)*.
 
-            return new[]
-            {
-                new DottedItem(this.Expression, this.DotBefore - 1, this.RecognizedInput),  // Jumps back before the item to recognize
-                new DottedItem(this.Expression, this.DotBefore + 2, this.RecognizedInput)   // Jumps out of the repeated item
-            };
+            return
+                new[]
+                {
+                    new DottedItem(this.Expression, this.DotBefore - 1, this.RecognizedInput),  // Jumps back before the item to recognize
+                    new DottedItem(this.Expression, this.DotBefore + 2, this.RecognizedInput)   // Jumps out of the repeated item
+                }
+                .AsItemSet();
         } 
 
-        private IEnumerable<DottedItem> MoveAnyOver(char input)
+        private DottedItemSet MoveAnyOver(char input)
         {
 
             if (input == '\r' || input == '\n')
                 return EmptyDottedItemSet;
 
-            return new[] { new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput + input) };
+            return new DottedItemSet(new DottedItem(this.Expression, this.DotBefore + 1, this.RecognizedInput + input));
 
         }
 
@@ -158,7 +161,7 @@ namespace RegexLexicalAnalyzer
 
         }
 
-        private IEnumerable<DottedItem> EmptyDottedItemSet => new DottedItem[0];
+        private DottedItemSet EmptyDottedItemSet => new DottedItem[0].AsItemSet();
 
         private string PatternBeforeDot => this.Pattern.Substring(0, this.DotBefore);
 
@@ -183,5 +186,19 @@ namespace RegexLexicalAnalyzer
 
         }
 
+        public int CompareTo(DottedItem other)
+        {
+
+            int result = this.TokenClass.CompareTo(other.TokenClass);
+
+            if (result == 0)
+                result = this.Pattern.CompareTo(other.Pattern);
+
+            if (result == 0)
+                result = this.DotBefore.CompareTo(other.DotBefore);
+
+            return result;
+
+        }
     }
 }
