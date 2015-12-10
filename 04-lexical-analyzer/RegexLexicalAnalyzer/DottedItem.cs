@@ -104,7 +104,7 @@ namespace RegexLexicalAnalyzer
             if (this.Pattern[this.DotBefore] == '(')
                 return this.EpsilonMoveBeforeRepetition();
 
-            if (this.Pattern[this.DotBefore] == '*')
+            if (this.Pattern[this.DotBefore] == ')')
                 return this.EpsilonMoveAfterRepetition();
 
             return new[] {this};
@@ -113,8 +113,8 @@ namespace RegexLexicalAnalyzer
 
         private IEnumerable<DottedItem> EpsilonMoveBeforeRepetition()
         {
-            // Covers subexpressions of form .(x*), where dot is placed right before the opening bracket
-            // This subexpression is turned into two dotted items: (.x*) and (x*).
+            // Covers subexpressions of form .(x)*, where dot is placed right before the opening bracket
+            // This subexpression is turned into two dotted items: (.x)* and (x)*.
 
             return new[]
             {
@@ -126,8 +126,8 @@ namespace RegexLexicalAnalyzer
 
         private IEnumerable<DottedItem> EpsilonMoveAfterRepetition()
         {
-            // Covers subexpressions of form (x.*), where x has already been recognized
-            // Turns subexpression into two dotted items: (.x*) and (x*).
+            // Covers subexpressions of form (x.)*, where x has already been recognized
+            // Turns subexpression into two dotted items: (.x)* and (x)*.
 
             return new[]
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using ParsingInterfaces;
 using System.Diagnostics.Contracts;
+using Common;
 
 namespace RegexLexicalAnalyzer
 {
@@ -24,7 +25,7 @@ namespace RegexLexicalAnalyzer
 
         public override string ToString()
         {
-            return string.Format("{0}({1})", this.Class, this.Representation.Replace("\r", "\\r").Replace("\n", "\\n"));
+            return string.Format("{0}({1})", this.Class, this.Representation.ToPrintableString());
         }
 
     }

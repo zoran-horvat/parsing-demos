@@ -13,9 +13,9 @@ namespace LexicalAnalyzerDemo
         static void Main(string[] args)
         {
 
-            GetExpressionTokens().Print(100);
+            //GetExpressionTokens().Print(100);
 
-            //GetCSharpFunctionTokens().Print(100);
+            GetCSharpFunctionTokens().Print(100);
 
             Console.Write("Press ENTER to exit... ");
             Console.ReadLine();
@@ -27,7 +27,7 @@ namespace LexicalAnalyzerDemo
 
             RegularExpression[] rules = new[]
             {
-                new RegularExpression("d(d*)", "number"),
+                new RegularExpression("d(d)*", "number"),
                 new RegularExpression("[()]", "parenthesis"),
                 new RegularExpression("[+-*/]", "operator")
             };
@@ -55,9 +55,9 @@ string Report(IEnumerable<int> values)
 
             RegularExpression[] rules = new[]
             {
-                new RegularExpression("d(d*)", "number"), 
-                new RegularExpression("a(a*)", "symbol"), 
-                new RegularExpression("s(s*)", "space"), 
+                new RegularExpression("d(d)*", "number"), 
+                new RegularExpression("a(a)*", "symbol"), 
+                new RegularExpression("s(s)*", "space"), 
                 new RegularExpression("[\r][\n]", "new-line"),
                 new RegularExpression("[\n]", "new-line"),
                 new RegularExpression("[/][/](.*)", "comment"),
@@ -73,7 +73,7 @@ string Report(IEnumerable<int> values)
 
             ITextInput input = new ConsoleBlockInput("Enter block of C# code (end with line containing just -):\n", "-");
 
-            input.LookAhead.Select(c => c.ToString().Replace("\r", "\\r").Replace("\n", "\\n")).Print(80);
+            input.LookAhead.Select(c => c.ToPrintableString()).Print(80);
             return lexer.Analyze(input);
 
         } 
