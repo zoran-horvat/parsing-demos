@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Common;
+using ParsingInterfaces;
 
 namespace RegexLexicalAnalyzer.RegexLexer
 {
@@ -24,6 +26,36 @@ namespace RegexLexicalAnalyzer.RegexLexer
         {
             this.Items = new[] { item };
         }
+
+        public DottedItemSet GetFollowingSet(char lookahead)
+        {
+            return 
+                this.Items
+                    .SelectMany(item => item.MoveOver(lookahead))
+                    .Distinct()
+                    .AsItemSet();
+        }
+
+        public Option<IToken> TryReduce()
+        {
+            return 
+                this.Items
+                    .OrderBy(item => item.Priority)
+                    .SelectMany(item => item.TryReduce())
+                    .Take(1)
+                    .AsOption();
+        }
+
+        public Option<string> TryReduceTokenClass()
+        {
+            return 
+                this
+                    .TryReduce()
+                    .Select(token => token.Class)
+                    .AsOption();
+        }
+
+        public bool IsEmpty => !this.Items.Any();
 
         public IEnumerator<DottedItem> GetEnumerator()
         {

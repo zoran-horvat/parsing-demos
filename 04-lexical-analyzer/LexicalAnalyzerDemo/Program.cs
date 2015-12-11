@@ -59,13 +59,13 @@ namespace LexicalAnalyzerDemo
 
         }
 
-string Report(IEnumerable<int> values)
-{   // Supply to C# lexer
-    int sum = 0;    // Initialize sum
-    foreach (int value in values)
-        sum += value * (value + 1) / 2;
-    return string.Format("Sum of sums is {0}", sum);
-}
+//string Report(IEnumerable<int> values)
+//{   // Supply to C# lexer
+//    int sum = 0;    // Initialize sum
+//    foreach (int value in values)
+//        sum += value * (value + 1) / 2;
+//    return string.Format("Sum of sums is {0}", sum);
+//}
 
         private static IEnumerable<IToken> GetCSharpFunctionTokens()
         {

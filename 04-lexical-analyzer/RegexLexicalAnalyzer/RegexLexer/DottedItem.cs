@@ -13,17 +13,23 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
         private RegularExpression Expression { get; }
 
+        public int Priority { get; }
+
         private string Pattern => this.Expression.Pattern;
 
         private string TokenClass => this.Expression.Class;
 
         private int DotBefore { get; }
 
-        private DottedItem(RegularExpression expression)
+        private DottedItem(RegularExpression expression, int priority)
         {
+
             Contract.Requires<ArgumentNullException>(expression != null, "Regular expression must not be null.");
+
             this.Expression = expression;
+            this.Priority = priority;
             this.RecognizedInput = string.Empty;
+
         }
 
         private DottedItem(RegularExpression expression, int dotBefore, string recognizedInput)
@@ -33,9 +39,9 @@ namespace RegexLexicalAnalyzer.RegexLexer
             this.RecognizedInput = recognizedInput;
         }
 
-        public static DottedItemSet InitialSetFor(RegularExpression expression)
+        public static DottedItemSet InitialSetFor(RegularExpression expression, int priority)
         {
-            return new DottedItem(expression).EpsilonMove();
+            return new DottedItem(expression, priority).EpsilonMove();
         }
 
         public DottedItemSet MoveOver(char input)

@@ -13,7 +13,7 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
         private IEnumerable<RegularExpression> Rules { get; }
 
-        private DottedItemSet InitialSet => this.Rules.SelectMany(rule => DottedItem.InitialSetFor(rule)).Distinct().AsItemSet();
+        private DottedItemSet InitialSet => this.Rules.SelectMany(DottedItem.InitialSetFor).Distinct().AsItemSet();
 
         private string CalculateAlphabet() => new string(this.Rules.SelectMany(rule => rule.GetAlphabet()).Distinct().OrderBy(c => c).ToArray());
 
@@ -85,7 +85,7 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
         }
 
-    public IEnumerable<IToken> Analyze(ITextInput input)
+        public IEnumerable<IToken> Analyze(ITextInput input)
         {
 
             while (input.CharactersRemaining > 0)
@@ -107,14 +107,6 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
         }
 
-        private DottedItemSet GetFollowingSet(DottedItemSet currentSet, char lookahead)
-        {
-            return currentSet
-                .SelectMany(item => item.MoveOver(lookahead))
-                .Distinct()
-                .AsItemSet();
-        }
-
         private Option<IToken> TryIdentifySingleToken(ITextInput input)
         {
 
@@ -129,10 +121,9 @@ namespace RegexLexicalAnalyzer.RegexLexer
             while (currentItemSet.Any() && lookahead.MoveNext())
             {
 
-                currentItemSet = this.GetFollowingSet(currentItemSet, lookahead.Current);
+                currentItemSet = currentItemSet.GetFollowingSet(lookahead.Current);
 
-                Option<IToken> newToken =
-                    currentItemSet.SelectMany(item => item.TryReduce()).Take(1).AsOption();
+                Option<IToken> newToken = currentItemSet.TryReduce();
 
                 if (newToken.Any())
                     outputToken = newToken;
@@ -174,19 +165,19 @@ namespace RegexLexicalAnalyzer.RegexLexer
                 foreach (char input in alphabet)
                 {
 
-                    DottedItemSet nextState = this.GetFollowingSet(currentState, input);
+                    DottedItemSet nextState = currentState.GetFollowingSet(input);
 
-                    int nextStateIndex = 0;
+                    int nextStateIndex;
 
-                    if (!states.Contains(nextState))
+                    if (states.Contains(nextState))
+                    {
+                        nextStateIndex = states.GetIndexFor(nextState);
+                    }
+                    else
                     {
                         states.Add(nextState);
                         nextStateIndex = states.GetIndexFor(nextState);
                         unexpandedStates.Enqueue(nextStateIndex);
-                    }
-                    else
-                    {
-                        nextStateIndex = states.GetIndexFor(nextState);
                     }
 
                     transitionTable.SetTransition(currentStateIndex, input, nextStateIndex);
