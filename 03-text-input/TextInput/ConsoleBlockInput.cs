@@ -18,6 +18,8 @@ namespace TextInput
         protected override string ReadText()
         {
 
+            Contract.Ensures(Contract.Result<string>() != null);
+
             StringBuilder sb = new StringBuilder();
 
             foreach (string line in this.ReadInputLines())

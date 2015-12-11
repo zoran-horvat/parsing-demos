@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace Common
 {
@@ -6,6 +7,8 @@ namespace Common
     {
         public static Option<TValue> TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key)
         {
+
+            Contract.Ensures(Contract.Result<Option<TValue>>() != null);
 
             TValue value;
 

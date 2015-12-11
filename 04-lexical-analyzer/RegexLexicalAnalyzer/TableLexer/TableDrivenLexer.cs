@@ -19,27 +19,29 @@ namespace RegexLexicalAnalyzer.TableLexer
             this.Table = transitionTable;
         }
 
-        public IEnumerable<IToken> Analyze(ITextInput input)
+        public IEnumerable<Token> Analyze(ITextInput input)
         {
 
             while (input.CharactersRemaining > 0)
             {
 
-                Option<IToken> possibleToken = TryIdentifySingleToken(input);
+                Option<Token> possibleToken = TryIdentifySingleToken(input);
 
                 if (!possibleToken.Any())
                     yield break;
 
-                IToken token = possibleToken.Single();
+                Token token = possibleToken.Single();
 
                 input.Advance(token.Representation.Length);
                 yield return token;
 
             }
 
+            yield return new Token(string.Empty, "end-of-input");
+
         }
 
-        private Option<IToken> TryIdentifySingleToken(ITextInput input)
+        private Option<Token> TryIdentifySingleToken(ITextInput input)
         {
 
             StringBuilder recognizedInput = new StringBuilder();
@@ -69,9 +71,9 @@ namespace RegexLexicalAnalyzer.TableLexer
 
             return 
                 longestTokenClass
-                    .Select(tokenClass => new StringClassToken(recognizedInput.ToString(), tokenClass))
-                    .Select(token => Option<IToken>.Some(token))
-                    .DefaultIfEmpty(Option<IToken>.None())
+                    .Select(tokenClass => new Token(recognizedInput.ToString(), tokenClass))
+                    .Select(token => Option<Token>.Some(token))
+                    .DefaultIfEmpty(Option<Token>.None())
                     .Single();
 
         }

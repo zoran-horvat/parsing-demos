@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Common
@@ -8,6 +9,8 @@ namespace Common
     {
         public static Option<T> AsOption<T>(this IEnumerable<T> sequence)
         {
+
+            Contract.Ensures(Contract.Result<Option<T>>() != null);
 
             if (!sequence.Any())
                 return Option<T>.None();

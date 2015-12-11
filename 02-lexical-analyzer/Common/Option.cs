@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace Common
 {
@@ -14,21 +15,25 @@ namespace Common
 
         public static Option<T> Some(T value)
         {
+            Contract.Ensures(Contract.Result<Option<T>>() != null);
             return new Option<T>(new T[] { value });
         }
 
         public static Option<T> None()
         {
+            Contract.Ensures(Contract.Result<Option<T>>() != null);
             return new Option<T>(new T[0]);
         }
 
         public IEnumerator<T> GetEnumerator()
         {
+            Contract.Ensures(Contract.Result<IEnumerator<T>>() != null);
             return ((IEnumerable<T>)this.Data).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
+            Contract.Ensures(Contract.Result<IEnumerator>() != null);
             return this.GetEnumerator();
         }
 
@@ -36,6 +41,8 @@ namespace Common
 
         public override string ToString()
         {
+
+            Contract.Ensures(Contract.Result<string>() != null);
 
             if (this.IsNone)
                 return "None";

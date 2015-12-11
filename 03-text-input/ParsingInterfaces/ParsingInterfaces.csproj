@@ -86,11 +86,16 @@
   <ItemGroup>
     <Compile Include="Contracts\LexicalAnalyzerContract.cs" />
     <Compile Include="Contracts\TextInputContract.cs" />
-    <Compile Include="Contracts\TokenContract.cs" />
     <Compile Include="ILexicalAnalyzer.cs" />
     <Compile Include="ITextInput.cs" />
-    <Compile Include="IToken.cs" />
+    <Compile Include="Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\02-lexical-analyzer\Common\Common.csproj">
+      <Project>{C4BD564A-59CB-4CD3-B224-91440219807F}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

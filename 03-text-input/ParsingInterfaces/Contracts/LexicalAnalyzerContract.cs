@@ -8,15 +8,15 @@ namespace ParsingInterfaces.Contracts
     [ContractClassFor(typeof(ILexicalAnalyzer))]
     internal abstract class LexicalAnalyzerContract : ILexicalAnalyzer
     {
-        IEnumerable<IToken> ILexicalAnalyzer.Analyze(ITextInput input)
+        IEnumerable<Token> ILexicalAnalyzer.Analyze(ITextInput input)
         {
 
             Contract.Requires<ArgumentNullException>(input != null, "Text input must be non-null.");
 
-            Contract.Ensures(Contract.Result<IEnumerable<IToken>>() != null);
-            Contract.Ensures(Contract.Result<IEnumerable<IToken>>().All(token => token != null));
+            Contract.Ensures(Contract.Result<IEnumerable<Token>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<Token>>().All(token => token != null));
 
-            return new IToken[0];
+            return new Token[0];
 
         }
     }

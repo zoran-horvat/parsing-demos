@@ -15,32 +15,27 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
         private DottedItemSet InitialSet => this.Rules.SelectMany(DottedItem.InitialSetFor).Distinct().AsItemSet();
 
-        private string CalculateAlphabet() => new string(this.Rules.SelectMany(rule => rule.GetAlphabet()).Distinct().OrderBy(c => c).ToArray());
+        private string CalculateAlphabet() => new string(this.Rules.SelectMany(rule => rule.GetAlphabet()).OrderBy(c => c).ToArray());
 
-        private IToken EndOfInputToken { get; }
+        private Token EndOfInputToken { get; }
 
         private Action EndOfRecognitionStep { get; set; }
 
         private Action<DottedItemSet>  PrintInitialItemSet { get; set; }
 
-        private Action<char, DottedItemSet, Option<IToken>> PrintInputAndItemSet { get; set; }
+        private Action<char, DottedItemSet, Option<Token>> PrintInputAndItemSet { get; set; }
 
-        private Action<Option<IToken>> PrintReducedToken { get; set; }
+        private Action<Option<Token>> PrintReducedToken { get; set; }
 
-        public RegularExpressionLexer(IEnumerable<RegularExpression> rules, string unexpectedInputClass, string endOfInputClass)
+        public RegularExpressionLexer(IEnumerable<RegularExpression> rules)
         {
 
             Contract.Requires<ArgumentNullException>(rules != null, "Lexical analyzer rules must not be null.");
             Contract.Requires<ArgumentException>(rules.All(rule => rule != null), "All rules for lexical analyzer must be non-null.");
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(unexpectedInputClass), "Class of unexpected input token must be non-empty.");
-            Contract.Requires<ArgumentException>(!string.IsNullOrWhiteSpace(endOfInputClass), "Class of end of input token must be non-empty.");
 
-            this.Rules =
-                rules
-                    .Concat(new RegularExpression[] {new RegularExpression(".", unexpectedInputClass)})
-                    .ToList();
+            this.Rules = rules.ToList();
 
-            this.EndOfInputToken = new StringClassToken(string.Empty, endOfInputClass);
+            this.EndOfInputToken = new Token(string.Empty, "end-of-input");
 
             this.EndOfRecognitionStep = () => { };
             this.PrintInitialItemSet = (itemSet) => { };
@@ -85,18 +80,18 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
         }
 
-        public IEnumerable<IToken> Analyze(ITextInput input)
+        public IEnumerable<Token> Analyze(ITextInput input)
         {
 
             while (input.CharactersRemaining > 0)
             {
 
-                Option<IToken> possibleToken = TryIdentifySingleToken(input);
+                Option<Token> possibleToken = TryIdentifySingleToken(input);
 
                 if (!possibleToken.Any())
                     yield break;
 
-                IToken token = possibleToken.Single();
+                Token token = possibleToken.Single();
 
                 input.Advance(token.Representation.Length);
                 yield return token;
@@ -107,7 +102,7 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
         }
 
-        private Option<IToken> TryIdentifySingleToken(ITextInput input)
+        private Option<Token> TryIdentifySingleToken(ITextInput input)
         {
 
             DottedItemSet currentItemSet = this.InitialSet;
@@ -116,7 +111,7 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
             PrintInitialItemSet(currentItemSet);
 
-            Option<IToken> outputToken = Option<IToken>.None();
+            Option<Token> outputToken = Option<Token>.None();
 
             while (currentItemSet.Any() && lookahead.MoveNext())
             {
@@ -125,7 +120,7 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
                 currentItemSet
                     .TryReduce()
-                    .ForEach(token => outputToken = Option<IToken>.Some(token));
+                    .ForEach(token => outputToken = Option<Token>.Some(token));
 
                 PrintInputAndItemSet(lookahead.Current, currentItemSet, outputToken);
 

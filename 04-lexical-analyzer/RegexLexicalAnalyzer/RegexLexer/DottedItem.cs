@@ -157,13 +157,13 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
         private bool IsReduceItem =>  this.DotBefore >= this.Pattern.Length;
 
-        public Option<IToken> TryReduce()
+        public Option<Token> TryReduce()
         {
 
             if (!this.IsReduceItem)
-                return Option<IToken>.None();
+                return Option<Token>.None();
 
-            return Option<IToken>.Some(new StringClassToken(this.RecognizedInput, this.TokenClass));
+            return Option<Token>.Some(new Token(this.RecognizedInput, this.TokenClass));
 
         }
 

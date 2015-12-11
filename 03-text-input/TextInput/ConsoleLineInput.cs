@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace TextInput
 {
@@ -10,6 +11,7 @@ namespace TextInput
 
         protected override string ReadText()
         {
+            Contract.Ensures(Contract.Result<string>() != null);
             return Console.ReadLine();
         }
     }

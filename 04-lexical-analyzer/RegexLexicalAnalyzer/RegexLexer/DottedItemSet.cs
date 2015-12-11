@@ -36,7 +36,7 @@ namespace RegexLexicalAnalyzer.RegexLexer
                     .AsItemSet();
         }
 
-        public Option<IToken> TryReduce()
+        public Option<Token> TryReduce()
         {
             return 
                 this.Items

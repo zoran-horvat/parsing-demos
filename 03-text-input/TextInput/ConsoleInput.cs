@@ -11,9 +11,9 @@ namespace TextInput
         private ITextInput basicInput;
         private string Prompt { get; }
 
-        private Func<ITextInput> GetBasicTextInput { get; set; } 
+        private Func<ITextInput> GetBasicTextInput { get; set; }
 
-        public ConsoleInput(string prompt)
+        protected ConsoleInput(string prompt)
         {
             Contract.Requires<ArgumentNullException>(prompt != null, "Prompt must not be null.");
             this.Prompt = prompt;

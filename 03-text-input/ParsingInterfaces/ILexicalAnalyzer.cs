@@ -7,6 +7,6 @@ namespace ParsingInterfaces
     [ContractClass(typeof(LexicalAnalyzerContract))]
     public interface ILexicalAnalyzer
     {
-        IEnumerable<IToken> Analyze(ITextInput input);
+        IEnumerable<Token> Analyze(ITextInput input);
     }
 }
