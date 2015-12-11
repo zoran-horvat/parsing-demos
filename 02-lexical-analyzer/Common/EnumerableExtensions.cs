@@ -16,6 +16,12 @@ namespace Common
 
         }
 
+        public static void ForEach<T>(this IEnumerable<T> sequence, Action<T> action)
+        {
+            foreach (T value in sequence)
+                action(value);
+        }
+
         public static void Print<T>(this IEnumerable<T> sequence, int lineWidth)
         {
 

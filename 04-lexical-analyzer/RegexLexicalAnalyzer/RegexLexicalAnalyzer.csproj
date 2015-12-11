@@ -95,6 +95,7 @@
     <Compile Include="StringClassToken.cs" />
     <Compile Include="TableLexer\TableDrivenLexer.cs" />
     <Compile Include="TableLexer\TransitionTable.cs" />
+    <Compile Include="TableLexer\TransitionTableVisualizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\02-lexical-analyzer\Common\Common.csproj">

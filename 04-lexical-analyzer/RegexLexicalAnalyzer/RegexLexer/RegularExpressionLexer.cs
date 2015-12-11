@@ -123,10 +123,9 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
                 currentItemSet = currentItemSet.GetFollowingSet(lookahead.Current);
 
-                Option<IToken> newToken = currentItemSet.TryReduce();
-
-                if (newToken.Any())
-                    outputToken = newToken;
+                currentItemSet
+                    .TryReduce()
+                    .ForEach(token => outputToken = Option<IToken>.Some(token));
 
                 PrintInputAndItemSet(lookahead.Current, currentItemSet, outputToken);
 
@@ -167,6 +166,9 @@ namespace RegexLexicalAnalyzer.RegexLexer
 
                     DottedItemSet nextState = currentState.GetFollowingSet(input);
 
+                    if (nextState.IsEmpty)
+                        continue;
+
                     int nextStateIndex;
 
                     if (states.Contains(nextState))
@@ -181,6 +183,10 @@ namespace RegexLexicalAnalyzer.RegexLexer
                     }
 
                     transitionTable.SetTransition(currentStateIndex, input, nextStateIndex);
+
+                    nextState
+                        .TryReduceTokenClass()
+                        .ForEach((tokenClass) => transitionTable.SetReduction(nextStateIndex, tokenClass));
 
                 }
 

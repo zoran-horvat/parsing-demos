@@ -4,7 +4,6 @@ using RegexLexicalAnalyzer.RegexLexer;
 using RegexLexicalAnalyzer.TableLexer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TextInput;
 
 namespace LexicalAnalyzerDemo
@@ -14,9 +13,9 @@ namespace LexicalAnalyzerDemo
         static void Main(string[] args)
         {
 
-            GetExpressionTokens().Print(100);
+            //GetExpressionTokens().Print(100);
 
-            //GetCSharpFunctionTokens().Print(100);
+            GetCSharpFunctionTokens().Print(100);
 
             Console.Write("Press ENTER to exit... ");
             Console.ReadLine();
@@ -39,21 +38,31 @@ namespace LexicalAnalyzerDemo
         private static RegularExpressionLexer CreateArithmeticExpressionLexer()
         {
             RegularExpressionLexer lexer = new RegularExpressionLexer(ArithmeticExpressionRules, "unexpected-input", "end-of-input");
-
-            TransitionTable transitionTable = lexer.GetTransitionTable();
-            transitionTable.GetAllTransitions().OrderBy(entry => entry.Item1).ThenBy(entry => entry.Item2).Select(entry => $"({entry.Item1}, {entry.Item2}) -> {entry.Item3}").Print(1);
+            lexer.Verbose();
+            lexer.StepByStep();
 
             return lexer;
+        }
+
+        private static TableDrivenLexer CreateArithmeticExpressionTableLexer()
+        {
+
+            RegularExpressionLexer parentLexer = CreateArithmeticExpressionLexer();
+
+            TransitionTable transitionTable = parentLexer.GetTransitionTable();
+            TransitionTableVisualizer visualizer = new TransitionTableVisualizer(transitionTable);
+
+            Console.WriteLine(visualizer.ToString());
+
+            return new TableDrivenLexer(transitionTable);
         }
 
         private static IEnumerable<IToken> GetExpressionTokens()
         {
 
-            RegularExpressionLexer lexer = CreateArithmeticExpressionLexer();
-            lexer.Verbose();
-            lexer.StepByStep();
-
             ITextInput input = new ConsoleLineInput("Enter an arithmetic expression: ");
+
+            ILexicalAnalyzer lexer = CreateArithmeticExpressionTableLexer();
 
             return lexer.Analyze(input);
 
@@ -67,33 +76,50 @@ namespace LexicalAnalyzerDemo
 //    return string.Format("Sum of sums is {0}", sum);
 //}
 
-        private static IEnumerable<IToken> GetCSharpFunctionTokens()
+        private static RegularExpressionLexer GetCSharpFunctionLexer()
         {
 
             RegularExpression[] rules = new[]
             {
-                new RegularExpression("d(d)*", "number"), 
-                new RegularExpression("a(a)*", "symbol"), 
-                new RegularExpression("s(s)*", "space"), 
+                new RegularExpression("d(d)*", "number"),
+                new RegularExpression("a(a)*", "symbol"),
+                new RegularExpression("s(s)*", "space"),
                 new RegularExpression("[\r][\n]", "new-line"),
                 new RegularExpression("[\n]", "new-line"),
-                new RegularExpression("[/][/](.*)", "comment"),
+                new RegularExpression("[/][/](.)*", "comment"),
                 new RegularExpression("[=]", "assignment"),
                 new RegularExpression("[+-*/<>]", "operator"),
                 new RegularExpression("[+][=]", "operator"),
                 new RegularExpression("[.,;]", "punctuator"),
-                new RegularExpression("[\"](.*)[\"]", "string"), 
+                new RegularExpression("[\"](.)*[\"]", "string"),
                 new RegularExpression("[(){}]", "parenthesis")
             };
 
-            RegularExpressionLexer lexer = new RegularExpressionLexer(rules, "unexpected-input", "end-of-input");
+            return new RegularExpressionLexer(rules, "unexpected-input", "end-of-input");
 
-            TransitionTable transitionTable = lexer.GetTransitionTable();
-            transitionTable.GetAllTransitions().OrderBy(entry => entry.Item1).ThenBy(entry => entry.Item2).Select(entry => $"({entry.Item1}, {entry.Item2}) -> {entry.Item3}").Print(1);
+        }
+
+        private static TableDrivenLexer GetCSharpFunctionTableLexer()
+        {
+
+            RegularExpressionLexer parentLexer = GetCSharpFunctionLexer();
+
+            TransitionTable transitionTable = parentLexer.GetTransitionTable();
+            TransitionTableVisualizer visualizer = new TransitionTableVisualizer(transitionTable);
+
+            Console.WriteLine(visualizer.ToString());
+
+            return new TableDrivenLexer(transitionTable);
+
+        }
+
+        private static IEnumerable<IToken> GetCSharpFunctionTokens()
+        {
+
+            ILexicalAnalyzer lexer = GetCSharpFunctionTableLexer();
 
             ITextInput input = new ConsoleBlockInput("Enter block of C# code (end with line containing just -):\n", "-");
 
-            input.LookAhead.Select(c => c.ToPrintableString()).Print(80);
             return lexer.Analyze(input);
 
         } 
